@@ -1,4 +1,9 @@
-# Detektera OS
+# =========================
+# Project: among_us
+# SDL2 + SDL2_image
+# =========================
+
+# ─── Detektera OS ────────────────────────────────────────
 ifeq ($(OS),Windows_NT)
     PLATFORM = windows
 else
@@ -11,42 +16,52 @@ else
 endif
 
 # ─── Gemensamt ───────────────────────────────────────────
-CC      = gcc
-SRCDIR  = ./source
-INCDIR  = ./include
+SRCDIR  = source
+OBJDIR  = build
+SRC     = $(SRCDIR)/main.c
+OBJ     = $(OBJDIR)/main.o
 CFLAGS  = -g -c
 LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lm
 
 # ─── Per plattform ───────────────────────────────────────
 ifeq ($(PLATFORM),mac)
     CC      = gcc-15
-    TARGET  = main
-    CFLAGS += -I/opt/homebrew/include/SDL2
+    TARGET  = among_us
+    CFLAGS += -I/opt/homebrew/include
     LDFLAGS += -L/opt/homebrew/lib
 
 else ifeq ($(PLATFORM),linux)
     CC      = gcc
-    TARGET  = main
-    CFLAGS += -I/usr/include/SDL2
+    TARGET  = among_us
+    CFLAGS += -I/usr/include
 
 else ifeq ($(PLATFORM),windows)
     CC      = gcc
-    TARGET  = main.exe
-    CFLAGS += -I/mingw64/include/SDL2
+    TARGET  = among_us.exe
+    CFLAGS += -I/mingw64/include
     LDFLAGS += -L/mingw64/lib
 endif
 
 # ─── Bygg-regler ─────────────────────────────────────────
-$(TARGET): main.o
-	$(CC) main.o -o $(TARGET) $(LDFLAGS)
+all: $(TARGET)
 
-main.o: $(SRCDIR)/main.c
-	$(CC) $(CFLAGS) $(SRCDIR)/main.c
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
+$(OBJ): $(SRC) | $(OBJDIR)
+	$(CC) $(CFLAGS) $(SRC) -o $(OBJ)
+
+$(TARGET): $(OBJ)
+	$(CC) $(OBJ) -o $(TARGET) $(LDFLAGS)
+
+run: $(TARGET)
+	./$(TARGET)
 
 # ─── Clean ───────────────────────────────────────────────
 clean:
 ifeq ($(PLATFORM),windows)
-	del /Q $(TARGET) *.o
+	del /Q $(TARGET)
+	rmdir /S /Q $(OBJDIR)
 else
-	rm -f $(TARGET) *.o
+	rm -rf $(OBJDIR) $(TARGET)
 endif
