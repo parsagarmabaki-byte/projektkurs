@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #define SPEED 300
 #define WINDOW_WIDTH 600

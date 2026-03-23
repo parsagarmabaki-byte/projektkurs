@@ -1,52 +1,35 @@
-# Detektera OS
-ifeq ($(OS),Windows_NT)
-    PLATFORM = windows
-else
-    UNAME := $(shell uname -s)
-    ifeq ($(UNAME),Darwin)
-        PLATFORM = mac
-    else
-        PLATFORM = linux
-    endif
-endif
+# =========================
+# Project: projektkurs
+# SDL2 + SDL2_image
+# Works on MSYS2 MinGW64 / Windows
+# =========================
 
-# ─── Gemensamt ───────────────────────────────────────────
-CC      = gcc
-SRCDIR  = ./source
-INCDIR  = ./include
-CFLAGS  = -g -c
-LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lm
+CC      := gcc
+TARGET  := projektkurs.exe
+SRCDIR  := source
+OBJDIR  := build
 
-# ─── Per plattform ───────────────────────────────────────
-ifeq ($(PLATFORM),mac)
-    CC      = gcc-15
-    TARGET  = projektkurs
-    CFLAGS += -I/opt/homebrew/include/SDL2
-    LDFLAGS += -L/opt/homebrew/lib
+SRC     := $(SRCDIR)/main.c
+OBJ     := $(OBJDIR)/main.o
 
-else ifeq ($(PLATFORM),linux)
-    CC      = gcc
-    TARGET  = projektkurs
-    CFLAGS += -I/usr/include/SDL2
+CFLAGS  := -g -Wall -Wextra -I/mingw64/include/SDL2
+LDFLAGS := -L/mingw64/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lm
 
-else ifeq ($(PLATFORM),windows)
-    CC      = gcc
-    TARGET  = projektkurs.exe
-    CFLAGS += -I/mingw64/include/SDL2
-    LDFLAGS += -L/mingw64/lib
-endif
+.PHONY: all clean run
 
-# ─── Bygg-regler ─────────────────────────────────────────
-$(TARGET): main.o
-	$(CC) main.o -o $(TARGET) $(LDFLAGS)
+all: $(TARGET)
 
-main.o: $(SRCDIR)/main.c
-	$(CC) $(CFLAGS) $(SRCDIR)/main.c
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
 
-# ─── Clean ───────────────────────────────────────────────
+$(OBJ): $(SRC) | $(OBJDIR)
+	$(CC) $(CFLAGS) -c $(SRC) -o $(OBJ)
+
+$(TARGET): $(OBJ)
+	$(CC) $(OBJ) -o $(TARGET) $(LDFLAGS)
+
+run: $(TARGET)
+	./$(TARGET)
+
 clean:
-ifeq ($(PLATFORM),windows)
-	del /Q $(TARGET) *.o
-else
-	rm -f $(TARGET) *.o
-endif
+	rm -rf $(OBJDIR) $(TARGET)
