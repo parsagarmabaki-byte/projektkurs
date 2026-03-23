@@ -27,7 +27,7 @@ int main(int argv, char** args){
         return 1;    
     }
 
-    SDL_Surface *pSurface = IMG_Load("resources/ship.png");
+    SDL_Surface *pSurface = IMG_Load("resources/green-hood.png");
     if(!pSurface){
         printf("Error: %s\n",SDL_GetError());
         SDL_DestroyRenderer(pRenderer);

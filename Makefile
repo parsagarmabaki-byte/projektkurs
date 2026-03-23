@@ -1,5 +1,5 @@
 # =========================
-# Project: among_us
+# Project: shroude
 # SDL2 + SDL2_image
 # =========================
 
@@ -26,18 +26,18 @@ LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lm
 # ─── Per plattform ───────────────────────────────────────
 ifeq ($(PLATFORM),mac)
     CC      = gcc-15
-    TARGET  = among_us
+    TARGET  = shrouded
     CFLAGS += -I/opt/homebrew/include
     LDFLAGS += -L/opt/homebrew/lib
 
 else ifeq ($(PLATFORM),linux)
     CC      = gcc
-    TARGET  = among_us
+    TARGET  = shrouded
     CFLAGS += -I/usr/include
 
 else ifeq ($(PLATFORM),windows)
     CC       = gcc
-    TARGET   = among_us.exe
+    TARGET   = shrouded.exe
     CFLAGS  += -I/mingw64/include
     LDFLAGS += -L/mingw64/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_net -lm
 endif
