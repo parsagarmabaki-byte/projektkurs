@@ -6,7 +6,7 @@
 #define SPEED        200
 #define PLAYER_W     64
 #define PLAYER_H     128
-#define WINDOW_WIDTH  2000
+#define WINDOW_WIDTH  1600
 #define WINDOW_HEIGHT 1000
 
 int main(void) {
