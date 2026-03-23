@@ -21,7 +21,7 @@ OBJDIR  = build
 SRC     = $(SRCDIR)/main.c
 OBJ     = $(OBJDIR)/main.o
 CFLAGS  = -g -c
-LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lm
+LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lm
 
 # ─── Per plattform ───────────────────────────────────────
 ifeq ($(PLATFORM),mac)
@@ -39,7 +39,7 @@ else ifeq ($(PLATFORM),windows)
     CC      = gcc
     TARGET  = among_us.exe
     CFLAGS += -I/mingw64/include
-    LDFLAGS += -L/mingw64/lib
+    LDFLAGS = -L/mingw64/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lm
 endif
 
 # ─── Bygg-regler ─────────────────────────────────────────
