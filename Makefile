@@ -14,26 +14,26 @@ endif
 CC      = gcc
 SRCDIR  = ./source
 INCDIR  = ./include
-TARGET  = simpleSDLexample1
 CFLAGS  = -g -c
 LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lm
 
 # ─── Per plattform ───────────────────────────────────────
 ifeq ($(PLATFORM),mac)
-    CC      = gcc-15   # Ändra till gcc-13 eller gcc-14 beroende på version
+    CC      = gcc-15
+    TARGET  = projektkurs
     CFLAGS += -I/opt/homebrew/include/SDL2
     LDFLAGS += -L/opt/homebrew/lib
 
 else ifeq ($(PLATFORM),linux)
     CC      = gcc
+    TARGET  = projektkurs
     CFLAGS += -I/usr/include/SDL2
-    # LDFLAGS behöver ingen -L på Linux vanligtvis
 
 else ifeq ($(PLATFORM),windows)
     CC      = gcc
+    TARGET  = projektkurs.exe
     CFLAGS += -I/mingw64/include/SDL2
     LDFLAGS += -L/mingw64/lib
-    TARGET  = simpleSDLexample1.exe
 endif
 
 # ─── Bygg-regler ─────────────────────────────────────────
