@@ -31,8 +31,8 @@ else ifeq ($(PLATFORM),linux)
 
 else ifeq ($(PLATFORM),windows)
     CC      = gcc
-    CFLAGS += -IC:/msys64/mingw64/include/SDL2   # Justera sökväg
-    LDFLAGS += -LC:/msys64/mingw64/lib
+    CFLAGS += -I/mingw64/include/SDL2
+    LDFLAGS += -L/mingw64/lib
     TARGET  = simpleSDLexample1.exe
 endif
 
