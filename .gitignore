@@ -1,2 +1,51 @@
-*.exe
+# Compiled objects
 *.o
+*.obj
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Static & dynamic libraries
+*.a
+*.so
+*.dylib
+*.dll
+
+# Build folders
+build/
+bin/
+dist/
+
+# Make files (auto-generated)
+Makefile~
+*.d
+
+# Debug / logs
+*.log
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# IDEs / editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# SDL / temp assets (if generated)
+*.bmp
+*.png~
+*.wav~
+
+# Networking / runtime temp
+*.cache
+
+# Coverage / profiling
+*.gcda
+*.gcno
+*.prof
