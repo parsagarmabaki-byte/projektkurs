@@ -20,18 +20,18 @@ LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lm
 # ─── Per plattform ───────────────────────────────────────
 ifeq ($(PLATFORM),mac)
     CC      = gcc-15
-    TARGET  = projektkurs
+    TARGET  = main
     CFLAGS += -I/opt/homebrew/include/SDL2
     LDFLAGS += -L/opt/homebrew/lib
 
 else ifeq ($(PLATFORM),linux)
     CC      = gcc
-    TARGET  = projektkurs
+    TARGET  = main
     CFLAGS += -I/usr/include/SDL2
 
 else ifeq ($(PLATFORM),windows)
     CC      = gcc
-    TARGET  = projektkurs.exe
+    TARGET  = main.exe
     CFLAGS += -I/mingw64/include/SDL2
     LDFLAGS += -L/mingw64/lib
 endif
