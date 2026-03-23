@@ -3,136 +3,118 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#define SPEED 300
-#define WINDOW_WIDTH 600
-#define WINDOW_HEIGHT 400
+#define SPEED        200
+#define PLAYER_W     64
+#define PLAYER_H     128
+#define WINDOW_WIDTH  2000
+#define WINDOW_HEIGHT 1000
 
-int main(int argv, char** args){
-    if(SDL_Init(SDL_INIT_VIDEO)!=0){
-        printf("Error: %s\n",SDL_GetError());
+int main(void) {
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        printf("SDL_Init Error: %s\n", SDL_GetError());
         return 1;
     }
 
-    SDL_Window* pWindow = SDL_CreateWindow("Enkelt exempel 1",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,WINDOW_WIDTH,WINDOW_HEIGHT,0);
-    if(!pWindow){
-        printf("Error: %s\n",SDL_GetError());
+    SDL_Window *pWindow = SDL_CreateWindow(
+        "Shrouded",
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        WINDOW_WIDTH, WINDOW_HEIGHT, 0
+    );
+    if (!pWindow) {
+        printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
         SDL_Quit();
         return 1;
     }
-    SDL_Renderer *pRenderer = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
-    if(!pRenderer){
-        printf("Error: %s\n",SDL_GetError());
+
+    SDL_Renderer *pRenderer = SDL_CreateRenderer(
+        pWindow, -1,
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+    );
+    if (!pRenderer) {
+        printf("SDL_CreateRenderer Error: %s\n", SDL_GetError());
         SDL_DestroyWindow(pWindow);
         SDL_Quit();
-        return 1;    
+        return 1;
     }
 
     SDL_Surface *pSurface = IMG_Load("resources/green-hood.png");
-    if(!pSurface){
-        printf("Error: %s\n",SDL_GetError());
+    if (!pSurface) {
+        printf("IMG_Load Error: %s\n", SDL_GetError());
         SDL_DestroyRenderer(pRenderer);
         SDL_DestroyWindow(pWindow);
         SDL_Quit();
-        return 1;    
+        return 1;
     }
     SDL_Texture *pTexture = SDL_CreateTextureFromSurface(pRenderer, pSurface);
     SDL_FreeSurface(pSurface);
-    if(!pTexture){
-        printf("Error: %s\n",SDL_GetError());
+    if (!pTexture) {
+        printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
         SDL_DestroyRenderer(pRenderer);
         SDL_DestroyWindow(pWindow);
         SDL_Quit();
-        return 1;    
+        return 1;
     }
 
-    SDL_Rect shipRect;
-    SDL_QueryTexture(pTexture,NULL,NULL,&shipRect.w,&shipRect.h);
-    shipRect.w/=6;
-    shipRect.h/=6;
-    float shipX = (WINDOW_WIDTH - shipRect.w)/2;//left side
-    float shipY = (WINDOW_HEIGHT - shipRect.h)/2;//upper side
-    float shipVelocityX = 0;//unit: pixels/s
-    float shipVelocityY = 0;
+    SDL_Rect playerRect = {
+        (WINDOW_WIDTH  - PLAYER_W) / 2,
+        (WINDOW_HEIGHT - PLAYER_H) / 2,
+        PLAYER_W,
+        PLAYER_H
+    };
+    float playerX = playerRect.x;
+    float playerY = playerRect.y;
 
-    bool closeWindow = false;
-    bool up,down,left,right;
-    up = down = left = right = false;
+    bool up = false, down = false, left = false, right = false;
+    bool running = true;
 
-    while(!closeWindow){
-
+    while (running) {
+        /* --- INPUT --- */
         SDL_Event event;
-        while(SDL_PollEvent(&event)){
-            switch(event.type){
-                case SDL_QUIT:
-                    closeWindow = true;
-                    break;
-                case SDL_KEYDOWN:
-                    switch(event.key.keysym.scancode){
-                        case SDL_SCANCODE_W:
-                        case SDL_SCANCODE_UP:
-                            up=true;
-                            break;
-                        case SDL_SCANCODE_A:
-                        case SDL_SCANCODE_LEFT:
-                            left=true;
-                            break;
-                        case SDL_SCANCODE_S:
-                        case SDL_SCANCODE_DOWN:
-                            down=true;
-                            break;
-                        case SDL_SCANCODE_D:
-                        case SDL_SCANCODE_RIGHT:
-                            right=true;
-                            break;
-                    }
-                    break;
-                case SDL_KEYUP:
-                    switch(event.key.keysym.scancode){
-                        case SDL_SCANCODE_W:
-                        case SDL_SCANCODE_UP:
-                            up=false;
-                        break;
-                        case SDL_SCANCODE_A:
-                        case SDL_SCANCODE_LEFT:
-                            left=false;
-                        break;
-                        case SDL_SCANCODE_S:
-                        case SDL_SCANCODE_DOWN:
-                            down=false;
-                        break;
-                        case SDL_SCANCODE_D:
-                        case SDL_SCANCODE_RIGHT:
-                            right=false;
-                        break;
-                    }
-                    break;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                running = false;
+            }
+            if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
+                bool pressed = (event.type == SDL_KEYDOWN);
+                switch (event.key.keysym.scancode) {
+                    case SDL_SCANCODE_W: case SDL_SCANCODE_UP:    up    = pressed; break;
+                    case SDL_SCANCODE_S: case SDL_SCANCODE_DOWN:  down  = pressed; break;
+                    case SDL_SCANCODE_A: case SDL_SCANCODE_LEFT:  left  = pressed; break;
+                    case SDL_SCANCODE_D: case SDL_SCANCODE_RIGHT: right = pressed; break;
+                    default: break;
+                }
             }
         }
 
-        shipVelocityX = shipVelocityY = 0;
-        if(up && !down) shipVelocityY = -SPEED;
-        if(down && !up) shipVelocityY = SPEED;
-        if(left && !right) shipVelocityX = -SPEED;
-        if(right && !left) shipVelocityX = SPEED;
-        shipX += shipVelocityX/60;//60 frames/s
-        shipY += shipVelocityY/60;
-        if(shipX<0) shipX=0;
-        if(shipY<0) shipY=0;
-        if(shipX>WINDOW_WIDTH-shipRect.w) shipX = WINDOW_WIDTH-shipRect.w;
-        if(shipY>WINDOW_HEIGHT-shipRect.h) shipY = WINDOW_HEIGHT-shipRect.h;
-        shipRect.x = shipX;
-        shipRect.y = shipY;
+        /* --- UPDATE --- */
+        float velX = 0, velY = 0;
+        if (up   && !down)  velY = -SPEED;
+        if (down && !up)    velY =  SPEED;
+        if (left && !right) velX = -SPEED;
+        if (right && !left) velX =  SPEED;
 
+        playerX += velX / 60.0f;
+        playerY += velY / 60.0f;
+
+        /* Håll spelaren inom fönstret */
+        if (playerX < 0)                        playerX = 0;
+        if (playerY < 0)                        playerY = 0;
+        if (playerX > WINDOW_WIDTH  - PLAYER_W) playerX = WINDOW_WIDTH  - PLAYER_W;
+        if (playerY > WINDOW_HEIGHT - PLAYER_H) playerY = WINDOW_HEIGHT - PLAYER_H;
+
+        playerRect.x = (int)playerX;
+        playerRect.y = (int)playerY;
+
+        /* --- DRAW --- */
         SDL_RenderClear(pRenderer);
-        SDL_RenderCopy(pRenderer,pTexture,NULL,&shipRect);
+        SDL_RenderCopy(pRenderer, pTexture, NULL, &playerRect);
         SDL_RenderPresent(pRenderer);
-        SDL_Delay(1000/60);//60 frames/s
     }
 
+    /* --- CLEANUP --- */
     SDL_DestroyTexture(pTexture);
     SDL_DestroyRenderer(pRenderer);
     SDL_DestroyWindow(pWindow);
-
     SDL_Quit();
     return 0;
 }
