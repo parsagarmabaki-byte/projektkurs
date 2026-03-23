@@ -21,7 +21,7 @@ OBJDIR  = build
 SRC     = $(SRCDIR)/main.c
 OBJ     = $(OBJDIR)/main.o
 CFLAGS  = -g -c
-LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lm
+LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lm
 
 # ─── Per plattform ───────────────────────────────────────
 ifeq ($(PLATFORM),mac)
