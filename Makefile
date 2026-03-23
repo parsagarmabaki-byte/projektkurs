@@ -36,10 +36,10 @@ else ifeq ($(PLATFORM),linux)
     CFLAGS += -I/usr/include
 
 else ifeq ($(PLATFORM),windows)
-    CC      = gcc
-    TARGET  = among_us.exe
-    CFLAGS += -I/mingw64/include
-    LDFLAGS = -L/mingw64/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lm
+    CC       = gcc
+    TARGET   = among_us.exe
+    CFLAGS  += -I/mingw64/include
+    LDFLAGS += -L/mingw64/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_net -lm
 endif
 
 # ─── Bygg-regler ─────────────────────────────────────────
@@ -57,7 +57,6 @@ $(TARGET): $(OBJ)
 run: $(TARGET)
 	./$(TARGET)
 
-# ─── Clean ───────────────────────────────────────────────
 clean:
 ifeq ($(PLATFORM),windows)
 	del /Q $(TARGET)
