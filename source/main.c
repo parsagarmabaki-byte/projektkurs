@@ -37,17 +37,38 @@ int main(void) {
         return 1;
     }
 
-    SDL_Surface *pSurface = IMG_Load("resources/green-hood.png");
-    if (!pSurface) {
-        printf("IMG_Load Error: %s\n", SDL_GetError());
+    SDL_Surface *pPlayer = IMG_Load("resources/green-hood.png"); // LOAD PLAYER
+     //FELHANTERING
+    if (!pPlayer) {
+        printf("IMG_Load Error (player): %s\n", SDL_GetError());
         SDL_DestroyRenderer(pRenderer);
         SDL_DestroyWindow(pWindow);
         SDL_Quit();
         return 1;
     }
-    SDL_Texture *pTexture = SDL_CreateTextureFromSurface(pRenderer, pSurface);
-    SDL_FreeSurface(pSurface);
-    if (!pTexture) {
+    SDL_Surface *pBackground = IMG_Load("resources/background-test.png"); // LOAD BACKGROUND
+     //FELHANTERING
+    if (!pBackground) {
+        printf("IMG_Load Error (background): %s\n", SDL_GetError());
+        SDL_DestroyRenderer(pRenderer);
+        SDL_DestroyWindow(pWindow);
+        SDL_Quit();
+        return 1;
+    }
+    SDL_Texture *pPlayerTexture = SDL_CreateTextureFromSurface(pRenderer, pPlayer);
+    SDL_FreeSurface(pPlayer); //tar bort den från minnet
+    //FELHANTERING
+    if (!pPlayerTexture) {
+        printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
+        SDL_DestroyRenderer(pRenderer);
+        SDL_DestroyWindow(pWindow);
+        SDL_Quit();
+        return 1;
+    }
+    SDL_Texture *pBackgroundTexture = SDL_CreateTextureFromSurface(pRenderer, pBackground);
+    SDL_FreeSurface(pBackground); //tar bort den från minnet
+    //FELHANTERING
+    if (!pBackgroundTexture) {
         printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
         SDL_DestroyRenderer(pRenderer);
         SDL_DestroyWindow(pWindow);
@@ -107,12 +128,14 @@ int main(void) {
 
         /* --- DRAW --- */
         SDL_RenderClear(pRenderer);
-        SDL_RenderCopy(pRenderer, pTexture, NULL, &playerRect);
+        SDL_RenderCopy(pRenderer, pBackgroundTexture, NULL, NULL);
+        SDL_RenderCopy(pRenderer, pPlayerTexture, NULL, &playerRect);
         SDL_RenderPresent(pRenderer);
     }
 
     /* --- CLEANUP --- */
-    SDL_DestroyTexture(pTexture);
+    SDL_DestroyTexture(pPlayerTexture);
+    SDL_DestroyTexture(pBackgroundTexture);
     SDL_DestroyRenderer(pRenderer);
     SDL_DestroyWindow(pWindow);
     SDL_Quit();
