@@ -8,6 +8,8 @@
 #define PLAYER_H     128
 #define WINDOW_WIDTH  1600
 #define WINDOW_HEIGHT 1000
+#define BACKGROUND_W  3200   // större än fönstret
+#define BACKGROUND_H  2000
 
 int main(void) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -120,17 +122,29 @@ int main(void) {
         /* Håll spelaren inom fönstret */
         if (playerX < 0)                        playerX = 0;
         if (playerY < 0)                        playerY = 0;
-        if (playerX > WINDOW_WIDTH  - PLAYER_W) playerX = WINDOW_WIDTH  - PLAYER_W;
-        if (playerY > WINDOW_HEIGHT - PLAYER_H) playerY = WINDOW_HEIGHT - PLAYER_H;
+        if (playerX > BACKGROUND_W  - PLAYER_W) playerX = BACKGROUND_W  - PLAYER_W;
+        if (playerY > BACKGROUND_H - PLAYER_H) playerY = BACKGROUND_H - PLAYER_H;
 
         playerRect.x = (int)playerX;
         playerRect.y = (int)playerY;
 
-        /* --- DRAW --- */
-        SDL_RenderClear(pRenderer);
-        SDL_RenderCopy(pRenderer, pBackgroundTexture, NULL, NULL);
-        SDL_RenderCopy(pRenderer, pPlayerTexture, NULL, &playerRect);
-        SDL_RenderPresent(pRenderer);
+       /* --- DRAW --- */
+        int cameraX = (int)playerX - (WINDOW_WIDTH  / 2) + (PLAYER_W / 2);
+        int cameraY = (int)playerY - (WINDOW_HEIGHT / 2) + (PLAYER_H / 2);
+
+        SDL_Rect bgRect = { -cameraX, -cameraY, BACKGROUND_W, BACKGROUND_H };
+        SDL_Rect screenPlayerRect = 
+        {
+            (WINDOW_WIDTH  - PLAYER_W) / 2,
+            (WINDOW_HEIGHT - PLAYER_H) / 2,
+            PLAYER_W,
+            PLAYER_H
+        };
+
+SDL_RenderClear(pRenderer);
+SDL_RenderCopy(pRenderer, pBackgroundTexture, NULL, &bgRect);
+SDL_RenderCopy(pRenderer, pPlayerTexture,     NULL, &screenPlayerRect);
+SDL_RenderPresent(pRenderer);
     }
 
     /* --- CLEANUP --- */
