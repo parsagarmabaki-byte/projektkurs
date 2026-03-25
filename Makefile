@@ -25,7 +25,7 @@ LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lm
 
 # ─── Per plattform ───────────────────────────────────────
 ifeq ($(PLATFORM),mac)
-    CC      = gcc-15
+    CC      = gcc
     TARGET  = shrouded
     CFLAGS += -I/opt/homebrew/include
     LDFLAGS += -L/opt/homebrew/lib
