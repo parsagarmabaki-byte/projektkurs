@@ -9,8 +9,8 @@
 #define PLAYER_H     128
 #define WINDOW_WIDTH  1600
 #define WINDOW_HEIGHT 1000
-#define BACKGROUND_W  3200   // större än fönstret
-#define BACKGROUND_H  2000
+#define BACKGROUND_W  1600  // större än fönstret
+#define BACKGROUND_H  1000
 
 int main(void) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
