@@ -49,3 +49,6 @@ Thumbs.db
 *.gcda
 *.gcno
 *.prof
+
+# Körbara filen ska inte pushas
+shrouded
