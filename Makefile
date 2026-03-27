@@ -16,10 +16,10 @@ else
 endif
 
 # ─── Gemensamt ───────────────────────────────────────────
-SRCDIR  = source
-OBJDIR  = build
-SRC     = $(SRCDIR)/main.c
-OBJ     = $(OBJDIR)/main.o
+SRCDIR = client/src
+OBJDIR = build
+SRC    = $(SRCDIR)/main.c
+OBJ    = $(OBJDIR)/main.o
 CFLAGS  = -g -c
 LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lm
 
