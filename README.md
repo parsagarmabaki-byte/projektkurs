@@ -14,9 +14,9 @@ shrouded/
 │   ├── sprites/
 │   └── maps/
 ├── client/
-│   └── src/main.c          ← SDL2 loop, input, rendering
+│   └── src/client.c          ← SDL2 loop, input, rendering
 ├── server/
-│   └── src/main.c          ← server loop, connections, tick logic
+│   └── src/server.c          ← server loop, connections, tick logic
 └── lib/
     ├── include/
     │   ├── player.h
