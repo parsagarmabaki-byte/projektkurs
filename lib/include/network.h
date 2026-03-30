@@ -1,39 +1,17 @@
-#ifndef NETWORK
-#define NETWORK
+#ifndef NETWORK_H
+#define NETWORK_H
 
-#define MAX_PLAYERS 6
+#include <SDL2/SDL_net.h>
+#include "network_data.h"
 
-// BARA RÖRELSER OCH ROLLER IMPLEMENTERADE
-// MER SKA LÄGGAS TILL
+int init_server(UDPsocket *socket);
+int init_client(UDPsocket *socket, IPaddress *server_addr);
 
-typedef struct { // Info som användaren klickar in
-    int player_id;
-    int up;
-    int down;
-    int left;
-    int right;
-} clientInput; 
+int send_join(UDPsocket socket, IPaddress server_addr);
+int send_client_input(UDPsocket socket, IPaddress server_addr, clientInput *input);
 
-typedef struct { // Info vart alla är
-    int active;
-    int player_id;
-    int x;
-    int y;
+int recieve_client_input(UDPsocket socket, UDPpacket *packet, clientInput *input);
+int recieve_game_state(UDPsocket socket, UDPpacket *packet, gameState *state);
 
-    int isAlive;
-    int isImpostor;
-    int isDoingTask;
-} playerState;
-
-typedef enum{
-    gameLobby,
-    gameRunning,
-    gameMeeting
-} gamePhase;
-
-typedef struct {
-    playerState players[MAX_PLAYERS];
-    gamePhase phase;
-} gameState;
-
+int send_game_state(UDPsocket socket, UDPpacket *packet, IPaddress addr, gameState *state);
 #endif
