@@ -22,7 +22,7 @@ typedef struct { // Info vart alla är
 
     int isAlive;
     int isImpostor;
-    int isDoing_task;
+    int isDoingTask;
 } playerState;
 
 typedef enum{
