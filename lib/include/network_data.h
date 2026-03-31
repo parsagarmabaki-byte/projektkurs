@@ -1,5 +1,5 @@
-#ifndef NETWORK_DATA
-#define NETWORK_DATA
+#ifndef NETWORK_DATA_H
+#define NETWORK_DATA_H
 
 #define MAX_PLAYERS 6
 #define SERVER_PORT 2000
@@ -45,5 +45,9 @@ typedef struct {
     gamePhase phase;
     int your_player_id;
 } gameState;
+
+typedef struct {
+    MessageType type;
+} joinMessage;
 
 #endif
