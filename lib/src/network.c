@@ -4,13 +4,13 @@
 #include "network.h"
 #include "network_data.h"
 
-int init_server(UDPsocket *socket){
+int init_server(UDPsocket *socket){ // 
     if (SDLNet_Init() != 0){
         printf("SDLNet_Init error: %s\n", SDLNet_GetError());
         return 0;
     }
 
-    *socket = SDLNet_UDP_Open(SERVER_PORT);
+    *socket = SDLNet_UDP_Open(SERVER_PORT); // Server fast port för att klienter ska hitta
     if (!*socket){
         printf("SDLNet_UDP_Open server error: %s\n",SDLNet_GetError());
         return 0;
@@ -23,7 +23,7 @@ int init_client(UDPsocket *socket, IPaddress *server_addr){
         return 0;
     }
     
-    *socket = SDLNet_UDP_Open(0);
+    *socket = SDLNet_UDP_Open(0); // Hitta slumpmässig ledig
     if (!*socket){
         printf("SDLNet_UDP_Open client error: %s\n",SDLNet_GetError());
         return 0;
