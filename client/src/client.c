@@ -2,7 +2,7 @@
 #include "network.h"
 
 int main() {
-    if (SDLNET_Init() < 0) {
+    if (SDLNet_Init() < 0) {
         printf("SDLNet_Init failed: %s\n", SDLNet_GetError());
         return 1;
     }

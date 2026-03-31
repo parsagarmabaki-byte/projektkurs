@@ -1,5 +1,5 @@
 # =========================
-# Project: shroude
+# Project: shrouded
 # SDL2 + SDL2_image
 # =========================
 
@@ -16,51 +16,61 @@ else
 endif
 
 # ─── Gemensamt ───────────────────────────────────────────
-SRCDIR = client/src
 OBJDIR = build
-SRC    = $(SRCDIR)/main.c
-OBJ    = $(OBJDIR)/main.o
-CFLAGS  = -g -c
-LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lm
+
+CLIENT_SRC = client/src/client.c
+SERVER_SRC = server/src/server.c
+
+CLIENT_OBJ = $(OBJDIR)/client.o
+SERVER_OBJ = $(OBJDIR)/server.o
+
+CFLAGS  = -g -c -Ilib/include
+LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lSDL2_net -lm
+
+SERVER_OUT = build/server
+CLIENT_OUT = build/client
 
 # ─── Per plattform ───────────────────────────────────────
 ifeq ($(PLATFORM),mac)
     CC      = gcc
-    TARGET  = shrouded
     CFLAGS += -I/opt/homebrew/include
     LDFLAGS += -L/opt/homebrew/lib
 
 else ifeq ($(PLATFORM),linux)
     CC      = gcc
-    TARGET  = shrouded
     CFLAGS += -I/usr/include
 
 else ifeq ($(PLATFORM),windows)
     CC       = gcc
-    TARGET   = shrouded.exe
     CFLAGS  += -I/mingw64/include
     LDFLAGS += -L/mingw64/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_net -lm
 endif
 
 # ─── Bygg-regler ─────────────────────────────────────────
-all: $(TARGET)
-
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
-$(OBJ): $(SRC) | $(OBJDIR)
-	$(CC) $(CFLAGS) $(SRC) -o $(OBJ)
+all: $(SERVER_OUT) $(CLIENT_OUT)
 
-$(TARGET): $(OBJ)
-	$(CC) $(OBJ) -o $(TARGET) $(LDFLAGS)
+$(CLIENT_OBJ): $(CLIENT_SRC) | $(OBJDIR)
+	$(CC) $(CFLAGS) $(CLIENT_SRC) -o $(CLIENT_OBJ)
 
-run: $(TARGET)
-	./$(TARGET)
+$(SERVER_OBJ): $(SERVER_SRC) | $(OBJDIR)
+	$(CC) $(CFLAGS) $(SERVER_SRC) -o $(SERVER_OBJ)
+
+$(CLIENT_OUT): $(CLIENT_OBJ)
+	$(CC) $(CLIENT_OBJ) -o $(CLIENT_OUT) $(LDFLAGS)
+
+$(SERVER_OUT): $(SERVER_OBJ)
+	$(CC) $(SERVER_OBJ) -o $(SERVER_OUT) $(LDFLAGS)
+
+run: $(CLIENT_OUT)
+	./$(CLIENT_OUT)
 
 clean:
 ifeq ($(PLATFORM),windows)
-	del /Q $(TARGET)
+	del /Q $(CLIENT_OUT) $(SERVER_OUT)
 	rmdir /S /Q $(OBJDIR)
 else
-	rm -rf $(OBJDIR) $(TARGET)
+	rm -rf $(OBJDIR) $(CLIENT_OUT) $(SERVER_OUT)
 endif
