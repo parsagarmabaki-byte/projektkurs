@@ -10,7 +10,9 @@
 typedef enum{
     MSG_JOIN,
     MSG_CLIENT_INPUT,
-    MSG_STATE
+    MSG_GAME_STATE,
+    MSG_READY_STATUS,
+    MSG_LOBBY_SELECTION
 } MessageType;
 
 typedef struct { // Info som användaren klickar in
@@ -20,6 +22,9 @@ typedef struct { // Info som användaren klickar in
     int down;
     int left;
     int right;
+    int interact;
+    int kill;
+    int report;
 } clientInput; 
 
 typedef struct { // Info vart alla är
