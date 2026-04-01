@@ -62,9 +62,34 @@ void cleanup_server(UDPsocket server_socket, UDPpacket *receive_packet) {
     SDLNet_Quit();
 }
 
+int count_active_players(gameState *state){
+    int count = 0;
+    for (int i = 0; i < MAX_PLAYERS; i++)
+    {
+        if (state->players[i].active){
+            count++;
+        }
+    }
+    return count;
+}
+int add_to_lobby(gameState *state){
+    for (int i = 0; i < MAX_PLAYERS; i++)
+    {
+        if (!state->players[i].active){
+            state->players[i].active = 1;
+            state->players[i].player_id = i;
+            return i;
+        }
+    }
+    return -1;
+}
 int main(void) {
     UDPsocket server_socket = NULL;
     UDPpacket *receive_packet = NULL;
+
+    gameState state = {0};
+    state.type = MSG_GAME_STATE;
+    state.phase = GAME_LOBBY;
 
     if (!init_server_network(&server_socket)) {
         return 1;
@@ -77,15 +102,24 @@ int main(void) {
     }
 
     printf("Server listening on port %d...\n", SERVER_PORT);
+    printf("Waiting for clients... %d/%d\n", count_active_players(&state), MAX_PLAYERS);
 
     while (1) {
         joinMessage join;
 
         if (receive_join_message(server_socket, receive_packet, &join)) {
-            handle_join_message(&join);
+            if (join.type == MSG_JOIN) {
+                int player_id = add_to_lobby(&state);
+                if (player_id >= 0) {
+                    printf("Client joined as player %d\n", player_id);
+                    printf("Waiting for clients... %d/%d\n", count_active_players(&state), MAX_PLAYERS);
+                }
+                else{
+                    printf("Lobby full.\n");
+                }
+            }
         }
     }
-
     cleanup_server(server_socket, receive_packet);
     return 0;
 }
