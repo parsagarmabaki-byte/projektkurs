@@ -1,14 +1,22 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_net.h>
+#include <SDL2/SDL_ttf.h>
 #include <string.h>
 #include <stdio.h>
 #include "network.h"
+
 
 typedef struct{
     UDPsocket socket;
     IPaddress serverAddr;
     UDPpacket *sendpacket;
 } Client;
+
+typedef struct {
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    TTF_Font *Font;
+} waitForPlayers;
 
 int initNetworking() {
     if (SDLNet_Init() < 0) {
@@ -68,6 +76,90 @@ void cleanClient(Client *client) {
     }
     SDLNet_Quit();
 }
+
+int initiate(waitForPlayers *pWait)
+{
+    if (SDL_Init(SDL_INIT_VIDEO) < 0){
+        printf("SDL_Init: %s\n", SDL_GetError());
+        return 0;
+    }
+   if (TTF_Init() < 0){
+        printf("TTF_Init: %s\n",TTF_GetError());
+        SDL_Quit();
+        return 0;
+   }
+
+   pWait->window = SDL_CreateWindow(
+    "Shrouded Lobby", 
+    SDL_WINDOWPOS_CENTERED, 
+    SDL_WINDOWPOS_CENTERED, 
+    800, 600,0
+    );
+
+    if (!pWait->window){
+        printf("SDL_CreateWindow: %s\n", SDL_GetError());
+        TTF_Quit();
+        SDL_Quit();
+        return 0;
+    }
+
+    pWait->renderer = SDL_CreateRenderer(pWait->window, -1, SDL_RENDERER_ACCELERATED);
+    if (!pWait->renderer){
+        printf("SDL_CreateRenderer: %s\n", SDL_GetError());
+        SDL_DestroyWindow(pWait->window);
+        TTF_Quit();
+        SDL_Quit();
+        return 0;
+    }
+
+    pWait->Font = TTF_OpenFont("assets/fonts/Roboto-Regular.ttf",32);
+    if (!pWait->Font){
+        printf("TTF_OpenFont: %s\n", TTF_GetError());
+        SDL_DestroyRenderer(pWait->renderer);
+        SDL_DestroyWindow(pWait->window);
+        TTF_Quit();
+        SDL_Quit();
+        return 0;
+    }
+   return 1;
+}
+
+void renderWaitingScreen(waitForPlayers *pWait){
+    SDL_Color white = {255,255,255,255};
+
+    SDL_Surface *surface = TTF_RenderText_Blended(
+        pWait->Font,
+        "Waiting for players...",
+        white
+    );
+    if (!surface) {
+        printf("TTF_RenderText_Blended: %s\n", TTF_GetError());
+        return;
+    }
+    
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(pWait->renderer, surface);
+    if (!texture){
+        printf("SDL_CreateTextureFromSurface: %s\n", SDL_GetError());
+        SDL_FreeSurface(surface);
+        return;
+    }
+    
+    SDL_Rect dst;
+    dst.w = surface->w;
+    dst.h = surface->h;
+    dst.x = (800 - dst.w) / 2;
+    dst.y = (600 - dst.h) / 2;
+
+    SDL_FreeSurface(surface);
+    
+    SDL_SetRenderDrawColor(pWait->renderer, 0, 0, 0, 255);
+    SDL_RenderClear(pWait->renderer);
+
+    SDL_RenderCopy(pWait->renderer, texture, NULL, &dst);
+    SDL_RenderPresent(pWait->renderer);
+
+    SDL_DestroyTexture(texture);
+}
 int main() {
     Client client = {0};
     
@@ -86,6 +178,27 @@ int main() {
     if (!sendMessage(&client)){
         return 1;
     }
+    
+    waitForPlayers lobby = {0};
+    SDL_Event event;
+    int running = 1;
+
+    if (!initiate(&lobby)){
+        return 1;
+    }
+    while (running){
+        while (SDL_PollEvent(&event)){
+            if (event.type == SDL_QUIT){
+                running = 0;
+            }
+        }
+        renderWaitingScreen(&lobby);
+    }
+    TTF_CloseFont(lobby.Font);
+    SDL_DestroyRenderer(lobby.renderer);
+    SDL_DestroyWindow(lobby.window);
+    TTF_Quit();
+    SDL_Quit();
     
     cleanClient(&client);
 

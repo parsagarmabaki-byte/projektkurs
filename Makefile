@@ -25,7 +25,7 @@ CLIENT_OBJ = $(OBJDIR)/client.o
 SERVER_OBJ = $(OBJDIR)/server.o
 
 CFLAGS  = -g -c -Ilib/include
-LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lSDL2_net -lm
+LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lSDL2_net -lm -lSDL2_ttf -lm
 
 SERVER_OUT = build/server
 CLIENT_OUT = build/client
@@ -43,7 +43,7 @@ else ifeq ($(PLATFORM),linux)
 else ifeq ($(PLATFORM),windows)
     CC       = gcc
     CFLAGS  += -I/mingw64/include
-    LDFLAGS += -L/mingw64/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_net -lm
+    LDFLAGS += -L/mingw64/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_net -lm -lSDL2_ttf -lm
 endif
 
 # ─── Bygg-regler ─────────────────────────────────────────
