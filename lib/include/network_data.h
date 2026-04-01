@@ -9,7 +9,7 @@
 
 typedef enum{
     MSG_JOIN,
-    MSG_INPUT,
+    MSG_CLIENT_INPUT,
     MSG_STATE
 } MessageType;
 
@@ -34,16 +34,16 @@ typedef struct { // Info vart alla är
 } playerState;
 
 typedef enum{
-    gameLobby,
-    gameRunning,
-    gameMeeting
+    GAME_LOBBY,
+    GAME_RUNNING,
+    GAME_MEETING
 } gamePhase;
 
 typedef struct {
     MessageType type;
     playerState players[MAX_PLAYERS];
     gamePhase phase;
-    int your_player_id;
+    int local_player_id;
 } gameState;
 
 typedef struct {
